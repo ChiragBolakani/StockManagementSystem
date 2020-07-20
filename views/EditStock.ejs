@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Node.js express mongDB CRUD</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+
+<body class="bg-info">
+    <div class="row">
+        <div class="col-md-6 offset-md-3" style="background-color: #fff;margin-top: 25px;padding:20px;">
+          <h3>Edit and Update</h3>
+
+<form action="/users/EditStock" method="POST" autocomplete="off">
+  <input type="hidden" name="_id" value="<%= attributes.id %>">
+  <div class="form-group">
+      <label>Model Number</label>
+      <input type="text" class="form-control" name="Modelnumber" placeholder="Modelnumber" value="<%= attributes.Modelnumber %>">
+      <div class="text-danger">
+          {{employee.fullNameError}}</div>
+  </div>
+  <div class="form-group">
+      <label>Item-type</label>
+      <input type="text" class="form-control" name="Itemtype" placeholder="Itemtype" value="<%= attributes.Itemtype %>">
+      <div class="text-danger">
+          {{employee.emailError}}</div>
+  </div>
+  <div class="form-group">
+      <label>Company</label>
+      <input type="text" class="form-control" name="Company" placeholder="Company" value="<%= attributes.Company %>">
+      <div class="text-danger">
+          {{employee.emailError}}</div>
+  </div>
+
+  <div class="form-group">
+      <label>Quantity</label>
+      <input type="text" class="form-control" name="Quantity" placeholder="Quantity" value="<%= attributes.Quantity %>">
+      <div class="text-danger">
+          {{employee.emailError}}</div>
+  </div>
+  <div class="form-group">
+      <label>MRP</label>
+      <input type="text" class="form-control" name="Mrp" placeholder="Mrp" value="<%= attributes.Mrp %>">
+      <div class="text-danger">
+          {{employee.emailError}}</div>
+  </div>
+  <div class="form-group">
+      <button type="submit" class="btn btn-info"><i class="fa fa-database"></i> Submit</button>
+      <a class="btn btn-secondary" href="/users/list"><i class="fa fa-list-alt"></i> View All</a>
+  </div>
