@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Manager</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="bg-info">
+    <form action="/admin/logout" method="post">
+        <button type="submit" class="btn" method="post" action = "">Logout</button>
+    </form>
+    <div class="row">
+        <div class="col-md-7 offset-md-3" style="background-color: #fff;margin-top: 50px;padding:20px;">
+          <h3><a class="btn btn-secondary" href="/admin/adminpanel/createuser"><i class="fa fa-plus"></i> Create New</a> <center>Users</center></h3>
+
+          <table class="table table-striped">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Created :</th>
+                  </tr>
+              </thead>
+
+              <tbody>
+                  <% attributes.forEach(function(item){ %>
+
+                  <tr>
+                      <td><%= item.Email %></td>
+                      <td><%= item.created_at %></td>
+                      <td>
+                          <a href="/admin/adminpanel/Delete/<%= item.id %>"><i class="fa fa-trash fa-lg" onclick="return confirm('Are you sure to delete this?')" aria-hidden="true"></i></a>
+                      </td>
+                  </tr>
+                  <% }); %>
+              </tbody>
+          </table>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

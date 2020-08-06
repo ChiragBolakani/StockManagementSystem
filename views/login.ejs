@@ -7,35 +7,44 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-<!-- <script type="text/javascript">
-  function valiadate(){
-      var modelnumber = document.getElementById('modelnumberid').value;
-      if(modelnumber == ""){
-      alert("Model number field cannot be empty")
-      }
+<script type="text/javascript">
+  function validate(){
+      var Email = document.getElementById('Emailid').value;
+      var Password = document.getElementById('passid').value;
+
+      if(Email == "" && Password!== "" ){
+        document.getElementById('text-danger').innerHTML = "Please fill the Email field"
+        return false
+    }else if(Password == "" && Email!== ""){
+        document.getElementById('passError').innerHTML = "Please fill the password field"
+        return false
+    }else if(Email == "" && Password == ""){
+        document.getElementById('passError').innerHTML = "Please fill the password field"
+        document.getElementById('text-danger').innerHTML = "Please fill the Email field"
+        return false
+    }else{
+        return true
     }
-</script> -->
+    }
+</script>
 
 <body class="bg-info">
     <div class="row">
         <div class="col-md-6 offset-md-3" style="background-color: #fff;margin-top: 25px;padding:20px;">
-          <h3>Login</h3>
+          <h3>Ekco Watch Co. - Login</h3>
 
-<form action="/users/" method="POST" autocomplete="off" onsubmit="">
+<form action="/users/" method="POST" autocomplete="off" name="loginForm" onsubmit="return validate()">
   <input type="hidden" name="_id" value="{{employee._id}}">
   <div class="form-group">
-      <label>Email</label>
+      <label>Name</label>
       <input id="Emailid" type="text" class="form-control" name="Email" placeholder="Email" value="">
-      <div class="text-danger">
-          {{employee.fullNameError}}</div>
+      <div id="text-danger" style="color: red;"></div>
   </div>
   <div class="form-group">
       <label>Password</label>
-      <input type="password" class="form-control" name="Password" placeholder="Password" value="">
-      <div class="text-danger">
-          {{employee.emailError}}</div>
+      <input type="password" class="form-control" id="passid" name="Password" placeholder="Password" value="">
+      <div id="passError" style="color: red;"></div>
   </div>
   <div class="form-group">
       <button type="submit" class="btn btn-info"><i class="fa fa-database"></i> Submit</button>
-      <a class="btn btn-secondary" href="/users/list"><i class="fa fa-list-alt"></i> View All</a>
   </div>

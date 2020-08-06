@@ -1,39 +1,5 @@
 const mongoose = require('mongoose');
 
-const StockSchema = new mongoose.Schema({
-  Modelnumber : {
-    type: String,
-    required : true,
-    index : true
-  },
-  Itemtype : {
-    type: String,
-    lowercase : true,
-    required : true
-  },
-  Quantity:{
-    type: Number,
-    required: true
-  },
-  Company:{
-    type: String,
-    required : true
-  },
-  Mrp : {
-    type: String,
-    required : true
-  },
-  Date : {
-    type : Date,
-    default : Date.now
-  }
-},{
-  timestamps : {
-    createdAt : 'created_at',
-    updatedAt : 'updated_at'
-  }
-})
-
 const LoginSchema = new mongoose.Schema({
   Email : {
     type: String,
@@ -48,26 +14,17 @@ const LoginSchema = new mongoose.Schema({
     createdAt : 'created_at',
     updatedAt : 'updated_at'
   }
-})
+}, {collection : 'logins'})
 
 const adminSchema = new mongoose.Schema({
   Email : {
-  type : String, 
-  required : true
+  type : String
   }, 
   Password : {
-  type : String, 
-  required : true
+  type : String
   }
-})
+}, {collection : 'admins'})
 
-
-StockSchema.index({Modelnumber : 'text'})
-
-const Login = mongoose.model('login', LoginSchema)
-const Stock = mongoose.model('stock', StockSchema)
-const Admin = mongoose.model('admin', adminSchema)
-
-module.exports = Stock;
-module.exports = Login;
-module.exports = Admin;
+module.exports = mongoose.model('admin', adminSchema)
+const Login = mongoose.model('login', LoginSchema);
+module.exports = Login

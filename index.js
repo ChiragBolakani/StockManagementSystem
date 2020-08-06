@@ -3,27 +3,29 @@ const mongoose = require('mongoose');
 const ejs = require('ejs');
 const app = express();
 const cookieParser = require('cookie-parser');
+const nocache = require('nocache');
 
 //set view engine
 app.set('view engine', 'ejs');
+
+
+//caching headers
+app.use(nocache())
 
 //set cookie parser
 app.use(cookieParser())
 
 //bodyparser
 app.use(express.json())
-app.use(express.urlencoded({exteded : false}))
+app.use(express.urlencoded({extended : true}))
 
 //routes
 app.use('/users/', require('./Routes/routes.js'))
 app.use('/admin/', require('./Routes/adminRoutes.js'))
 
 //conect to mongodb
-const db = 'mongodb+srv://chiragbolakani:chirag2016@mynodeapp-llu7u.mongodb.net/test?retryWrites=true&w=majority';
-mongoose.connect(db, {useNewUrlParser : true})
- .then(() => console.log("mongodb connected"))
- .catch(err => console.log(err));
+const db = process.env.MONGO_URI
+mongoose.connect(db, {useNewUrlParser : true, useUnifiedTopology : true, useFindAndModify : false,useCreateIndex : true})
+.then(app.listen(1234 || process.env.PORT))
+.catch(err=> console.log(err))
 
-app.listen(1234, console.log("listening to port 1234"));
-
-module.exports = db;

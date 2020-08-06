@@ -6,47 +6,51 @@
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
-
+<script type="text/javascript">
+    function valiadate(){
+        var modelnumber = document.getElementById('modelnumberid').value;
+        var itemtype = document.getElementById('itemtypeid').value;
+        var company = document.getElementById('companyid').value;
+        var quantity = document.getElementById('quantityid').value;
+        var mrp = document.getElementById('mrpid').value;
+  
+        if(modelnumber == "" || itemtype == "" || company == "" || quantity == "" || mrp == ""){
+            document.getElementById('text-danger').innerHTML = "Please fill all the fields properly"
+            return false
+          }else {
+              return true
+          }
+      }
+  </script>
 <body class="bg-info">
     <div class="row">
         <div class="col-md-6 offset-md-3" style="background-color: #fff;margin-top: 25px;padding:20px;">
           <h3>Edit and Update</h3>
+          <div id="text-danger" style="color: red;"></div>
 
-<form action="/users/EditStock" method="POST" autocomplete="off">
+<form action="/users/EditStock" method="POST" autocomplete="off" onsubmit="return valiadate()">
   <input type="hidden" name="_id" value="<%= attributes.id %>">
   <div class="form-group">
       <label>Model Number</label>
-      <input type="text" class="form-control" name="Modelnumber" placeholder="Modelnumber" value="<%= attributes.Modelnumber %>">
-      <div class="text-danger">
-          {{employee.fullNameError}}</div>
+      <input type="text" id="modelnumberid" class="form-control" name="Modelnumber" placeholder="Modelnumber" value="<%= attributes.Modelnumber %>">
   </div>
   <div class="form-group">
       <label>Item-type</label>
-      <input type="text" class="form-control" name="Itemtype" placeholder="Itemtype" value="<%= attributes.Itemtype %>">
-      <div class="text-danger">
-          {{employee.emailError}}</div>
+      <input type="text" id="itemtypeid" class="form-control" name="Itemtype" placeholder="Itemtype" value="<%= attributes.Itemtype %>">
   </div>
   <div class="form-group">
       <label>Company</label>
-      <input type="text" class="form-control" name="Company" placeholder="Company" value="<%= attributes.Company %>">
-      <div class="text-danger">
-          {{employee.emailError}}</div>
+      <input type="text" id="companyid" class="form-control" name="Company" placeholder="Company" value="<%= attributes.Company %>">
   </div>
 
   <div class="form-group">
       <label>Quantity</label>
-      <input type="text" class="form-control" name="Quantity" placeholder="Quantity" value="<%= attributes.Quantity %>">
-      <div class="text-danger">
-          {{employee.emailError}}</div>
+      <input type="text"  id="quantityid" class="form-control" name="Quantity" placeholder="Quantity" value="<%= attributes.Quantity %>">
   </div>
   <div class="form-group">
       <label>MRP</label>
-      <input type="text" class="form-control" name="Mrp" placeholder="Mrp" value="<%= attributes.Mrp %>">
-      <div class="text-danger">
-          {{employee.emailError}}</div>
+      <input type="text" id="mrpid" class="form-control" name="Mrp" placeholder="Mrp" value="<%= attributes.Mrp %>">
   </div>
   <div class="form-group">
       <button type="submit" class="btn btn-info"><i class="fa fa-database"></i> Submit</button>
-      <a class="btn btn-secondary" href="/users/list"><i class="fa fa-list-alt"></i> View All</a>
   </div>

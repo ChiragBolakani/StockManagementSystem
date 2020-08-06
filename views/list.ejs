@@ -6,26 +6,22 @@
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
 <body class="bg-info">
-    <form action="../users/logout" method="post">
+    <form action="/users/logout" method="post" autocomplete="off" >
         <button type="submit" class="btn" method="post" action = "">Logout</button>
     </form>
     <div class="row">
         <div class="col-md-7 offset-md-3" style="background-color: #fff;margin-top: 50px;padding:20px;">
-          <h3><a class="btn btn-secondary" href="/users/StockStats"><i class="fa fa-plus"></i> Create New</a> <center>Inventory List</center></h3>
-      <form id="Dropdownclass" action="/users/list/search" method="post">
-            <select name="type" id="itemtypeid">
-              <option value=""></option>
-              <option value="clock">clock</option>
-              <option value="watch">watch</option>
-            </select>
-            <input type="text" name="Modelnumbersearch" value="">
+          <h3><a class="btn btn-secondary" href="/users/createstock"><i class="fa fa-plus"></i> Create New</a> <center>Inventory List</center></h3>
+      <form id="Dropdownclass" action="/users/list/search" onsubmit="" method="post">
+    
+            <input type="text" name = "type" value = "" id="typeId" placeholder="Item Type">
+            <input type="text" name="Modelnumbersearch" value="" id="ModelsearchId" placeholder="Model Number">
             <button type="submit" name="button">Submit</button>
           </form>
 
-          <form class="showAllclass" action="./" method="get">
-            <button type="submit" name="button">Show All</button>
+          <form class="showAllclass" action="/users/list" method="get">
+            <button type="submit" name="button" >Show All</button>
           </form>
 
           <table class="table table-striped">
@@ -54,7 +50,9 @@
                       <th><%= item.updated_at %></th>
                       <td>
                           <a href="/users/EditStock/<%= item.id %>"><i class="fa fa-pencil fa-lg" aria-hidden="true"></i></a>
-                          <a href="/users/Delete/<%= item.id %>"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a>
+                          <br>
+                          <br>
+                          <a href="/users/Delete/<%= item.id %>"><i class="fa fa-trash fa-lg" aria-hidden="true" onclick="return confirm('Are you sure to delete this?')" ></i></a>
                       </td>
                   </tr>
                   <% }); %>

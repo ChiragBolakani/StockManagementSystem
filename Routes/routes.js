@@ -6,89 +6,136 @@ const {ObjectId} = require('mongodb');
 const db = require('../index.js')
 const Login = require('../models/StockSchema.js');
 const jwt = require('jsonwebtoken');
-const verify = require('./verifyToken.js')
 const dotenv = require('dotenv');
-const verifyToken = require('./verifyToken.js');
+const checktoken = require('./checktoken.js');
 const cookieParser = require('cookie-parser');
+const { collection } = require('../models/StockSchema.js');
+const bcrypt = require('bcrypt');
 dotenv.config();
+
+const schemaoptions = {
+  timestamps : {
+    createdAt : 'created_at',
+    updatedAt : 'updated_at'
+  } 
+}
+
+const StockSchema = new mongoose.Schema({
+
+  Modelnumber : {
+    type: String,
+    required : true,
+    index : true
+  },
+  Itemtype : {
+    type: String,
+    required : true,
+    index : true
+  },
+  Quantity:{
+    type: Number,
+    required: true
+  },
+  Company:{
+    type: String,
+    required : true
+  },
+  Mrp : {
+    type: String,
+    required : true
+  }
+},{
+  timestamps : {
+    createdAt : 'created_at',
+    updatedAt : 'updated_at'
+  } 
+})
+
+StockSchema.index({Modelnumber : 'text', Itemtype : 'text'})
+const test = mongoose.model('test', StockSchema)
 
 router.get("/home", (req, res) =>{
   res.send("hello there")
 })
 
+//login
 router.get("/", (req, res)=>{
   res.render("login")
 })
 
-router.post("/", (req,res)=>{
-
- const user = {
-   Email : req.body.Email,
-   Password : req.body.Password,
-
- }
-
- Login.findOne({ Email : user.Email, Password : user.Password}, (err,User)=>{
-
-   if(User){
-     const token = jwt.sign({_id : User._id, Email : user.Email}, process.env.TOKEN_SECRET)
-     res.cookie("authToken", token, {httpOnly : true})
-     console.log('user exists')
-     res.redirect("list")
-   }else{
-     res.send('User Not Found', 401)
-   }
- })
-})
-
-router.get("/StockStats", checktoken,(req,res)=>{
-  res.render("Statspage.ejs")
-})
-
-router.post("/StockStats", (req,res)=>{
-  console.log(req.body)
-  const newStock = new Stock();
-
-  newStock.Modelnumber = req.body.Modelnumber;
-  newStock.Itemtype = req.body.Itemtype;
-  newStock.Quantity = req.body.Quantity;
-  newStock.Mrp = req.body.Mrp;
-  newStock.Company = req.body.Company;
-
-  newStock.save((err, newStock)=>{
-    if(err){
-      console.log(err)
+router.post('/', (req,res)=>{
+  mongoose.model('login').findOne({Email : req.body.Email.trim()}, (err,user)=>{
+    const Password = req.body.Password;
+    if(!user){
+        res.send("<h1>Cannot Access</h1>").status(401)
     }else{
-      res.redirect("./list")
-      console.log("saved")    }
+        const token = jwt.sign({_id : user._id, Email : user.Email}, process.env.TOKEN_SECRET)
+        res.cookie("authToken", token, {httpOnly : true})
+
+        bcrypt.compare(Password, user.Password, (err, compared)=>{
+            if(compared){
+                res.redirect("list")
+            }else{
+                res.send("blunder")
+            }
+        })
+    }
   })
 })
 
-router.post("/list/search", (req,res)=>{
+//create stock
+router.get("/createstock", checktoken, (req,res)=>{
+  res.render("Statspage.ejs")
+})
 
-  var filterItemtype = req.body.type;
-  var filterSearch = req.body.Modelnumbersearch;
+router.post("/createstock", checktoken, (req,res)=>{
+
+  const Company = req.body.Company.trim()
+  const capitalizeCompany = Company.charAt(0).toUpperCase() + Company.slice(1)
+
+  const Itemtype = req.body.Itemtype.trim()
+  const capitalizeItemType = Itemtype.charAt(0).toUpperCase() + Itemtype.slice(1)
+
+  const stockitem = new test({
+  Modelnumber : req.body.Modelnumber.trim(),
+  Itemtype : capitalizeItemType,
+  Quantity : req.body.Quantity,
+  Mrp : req.body.Mrp,
+  Company : capitalizeCompany
+  });
+  
+  stockitem.save((err)=>{
+    if(err){
+      res.status(500)
+    }else{
+      res.redirect("./list")
+     }
+  })
+})
+
+//search
+router.post("/list/search", checktoken, (req,res)=>{
+  const Itemtype = req.body.type.trim()
+  const capitalizeItemType = Itemtype.charAt(0).toUpperCase() + Itemtype.slice(1)
+
+  var filterItemtype = capitalizeItemType;
+  var filterSearch = req.body.Modelnumbersearch.trim();
 
   if(filterItemtype!=="" && filterSearch!== "" ){
-    var filterParam = {$and : [{Itemtype : filterItemtype}, {Modelnumber : {$regex : filterSearch}}]}
-
+    var filterParam = {Itemtype : {$regex : filterItemtype, $options : 'i'}, Modelnumber : {$regex : filterSearch, $options : 'i'}}
+      
   }else if(filterItemtype == "" && filterSearch!= ""){
-    console.log("item khaali aur search bhara")
-    var filterParam = {Modelnumber : {$regex : filterSearch}}
+    var filterParam = {Modelnumber : {$regex : filterSearch, $options: 'i'}}
 
   }else if (filterItemtype!== "" && filterSearch== "") {
-    console.log("item bhara aur search khali")
-    var filterParam = {Itemtype : filterItemtype}
+    var filterParam = {Itemtype : {$regex :  filterItemtype, $options : 'i'}}
 
-  }else{
-    console.log("inside else")
   }
 
-  mongoose.model('stock').find(filterParam, (err, attributes)=>{
+  mongoose.model('test').find(filterParam, (err, attributes)=>{
     if(err){
-      console.log(err)
+      res.status(500)
     }else{
-      // res.send(attributes)
       res.render("list", {
         attributes : attributes
       })
@@ -96,10 +143,11 @@ router.post("/list/search", (req,res)=>{
   })
 })
 
-router.get("/EditStock/:id", (req,res)=>{
-  Stock.findById(req.params.id, (err, attributes)=>{
+//editstock
+router.get("/EditStock/:id", checktoken, (req,res)=>{
+  mongoose.model('test').findById(req.params.id, (err, attributes)=>{
     if(err){
-      console.log(err)
+      res.status(500)
     }else{
       res.render("EditStock.ejs", {
         attributes : attributes
@@ -108,44 +156,41 @@ router.get("/EditStock/:id", (req,res)=>{
   })
 })
 
-router.post("/EditStock/", (req,res) => {
-  Stock.findOneAndUpdate({_id : req.body._id}, req.body, { new:true }, (err, doc)=>{
+router.post("/EditStock/", checktoken, (req,res) => {
+  const Company = req.body.Company.trim()
+  const capitalizeCompany = Company.charAt(0).toUpperCase() + Company.slice(1)
+
+  const Itemtype = req.body.Itemtype.trim()
+  const capitalizeItemType = Itemtype.charAt(0).toUpperCase() + Itemtype.slice(1)
+
+  const stockitem = {
+  Modelnumber : req.body.Modelnumber.trim(),
+  Itemtype : capitalizeItemType,
+  Quantity : req.body.Quantity,
+  Mrp : req.body.Mrp,
+  Company : capitalizeCompany
+  }
+  mongoose.model('test').findByIdAndUpdate({_id : req.body._id}, stockitem, { new:true }, (err, doc)=>{
     if(err){
-      console.log(err)
+      res.status(500)
     }else{
       res.redirect("list")
     }
   })
-  console.log(req.body)
 })
 
-function checktoken(req,res,next){
-  const token = req.cookies['authToken'];
-  // const decoded = jwt.decode(token)
-  // const email = decoded.Email;
-  if(!token) return res.status(401).send('access denied');
-  
-  try {
-      const verified = jwt.verify(token, process.env.TOKEN_SECRET); 
-      req.user = verified;
-      next();
-  } catch {
-      res.status(400).send('invalid token');
-  }
-}
-
-router.post("/logout", (req,res)=>{
+//logout
+router.post("/logout", checktoken, (req,res)=>{
   res.clearCookie('authToken').redirect('/users')
   
 })
 
 //Listing Stock
-router.get('/list',checktoken, (req,res) =>{
-  mongoose.model('stock').find((err,attributes)=>{
+router.get('/list', checktoken,(req,res) =>{
+  mongoose.model('test').find((err,attributes)=>{
     if(err){
-      console.log(err)
+      res.status(500)
     }else{
-      // res.send(attributes)
       res.render("list.ejs", {
         attributes : attributes
       })
@@ -153,18 +198,16 @@ router.get('/list',checktoken, (req,res) =>{
   })
 })
 
-router.get("/Delete/:id", (req,res)=>{
-  console.log(req.params.id);
-  Stock.findByIdAndRemove(new ObjectId(req.params.id), (err, doc)=>{
+
+//delete stock
+router.get("/Delete/:id", checktoken, (req,res)=>{
+  mongoose.model('test').findByIdAndRemove(new ObjectId(req.params.id), (err, doc)=>{
     if(err){
-      console.log(err)
+      res.status(500)
     }else{
       res.redirect("../list")
-
-          }
+    }
   })
 })
-
-
 
 module.exports = router;
