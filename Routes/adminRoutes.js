@@ -35,25 +35,6 @@ router.post('/', (req,res)=>{
     })
 })
 
-// router.get("/test", (req,res)=>{
-//         console.log(req.body)
-//         const admin = new Admin();
-      
-//         admin.Email = "kingammar";
-//         admin.Password = "121199";
-    
-//         bcrypt.hash(admin.Password, 10, function(err, hash) {
-//            admin.Password = hash;
-//            admin.save((err, admin)=>{
-//             if(err){
-//               console.log(err)
-//             }else{
-//               res.send(admin)
-//             }
-//           }) 
-//         });
-//     })
-
 router.get('/adminpanel', checkadmin, (req,res)=>{
     mongoose.model('login').find((err,attributes)=>{
         if(err){
