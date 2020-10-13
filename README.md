@@ -1,8 +1,8 @@
 # StockManagementSystem
 
-**Link : https://stock-chirag.herokuapp.com/users**
-**Username : chirag**
-**Password : chirag**
+## Link : https://stock-chirag.herokuapp.com/users**
+### Username : chirag
+### Password : chirag
 
 **YOUR_MongoURI_HERE in .env to be replaced with your MongoURI in order to establish connection to the MongoDB database.**
 
