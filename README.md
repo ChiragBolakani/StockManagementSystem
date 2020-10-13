@@ -1,6 +1,6 @@
 # StockManagementSystem
 
-## Link : https://stock-chirag.herokuapp.com/users**
+## Link : https://stock-chirag.herokuapp.com/users
 ### Username : chirag
 ### Password : chirag
 
